@@ -10,7 +10,7 @@
 <a href="#konten" class="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-[60] focus:rounded focus:bg-white focus:px-4 focus:py-2">Lewati ke konten</a>
 
 <!-- HEADER -->
-<header class="absolute inset-x-0 top-0 z-50 text-white">
+<header id="hdr" class="fixed inset-x-0 top-0 z-50 text-white transition-colors duration-300">
   <div class="mx-auto max-w-7xl px-6 md:px-12">
     <div class="hidden items-center justify-end gap-7 pt-4 text-sm md:flex">
       <a href="#" class="hover:underline focus-visible:outline-2 focus-visible:outline-white">Pengadaan</a>
@@ -55,7 +55,7 @@
     </div>
     <div class="slide absolute inset-0 hidden flex-col items-center justify-center bg-linear-to-b from-blue-800 to-blue-500 px-6 pb-28 pt-36 text-center text-white">
       <h2 class="text-5xl font-black md:text-7xl">AJP 2026</h2>
-      <p class="mt-4 text-lg md:text-xl">Ganti teks ini dengan informasi acara atau program Anda.</p>
+      <p class="mt-4 text-lg md:text-xl">APRESIASI JURNALISTIK PERTAMINA 2026</p>
     </div>
     <div class="slide absolute inset-0 hidden flex-col items-center justify-center bg-linear-to-b from-green-800 to-lime-500 px-6 pb-28 pt-36 text-center text-white">
       <h2 class="text-5xl font-black md:text-7xl">Bijak Berenergi</h2>
@@ -104,9 +104,9 @@
           <p class="mt-4 text-sky-100">PT Pertamina (Persero) kembali mengukir prestasi sebagai perusahaan energi Indonesia yang mampu bersaing di tingkat global dengan peringkat 171 dalam daftar Fortune 500 Global 2025.</p>
         </article>
         <div class="grid gap-6 sm:grid-cols-3 lg:col-span-2">
-          <div class="rounded-xl border border-slate-200 bg-white p-6"><p class="text-xs font-semibold tracking-widest text-slate-500">PENDAPATAN (2024)</p><p class="mt-3 text-3xl font-bold text-blue-800">USD 75,33</p><p class="font-semibold">Miliar</p><p class="mt-2 text-sm text-slate-500">Jumlah pendapatan yang dicapai Pertamina pada tahun 2024.</p></div>
-          <div class="rounded-xl border border-slate-200 bg-white p-6"><p class="text-xs font-semibold tracking-widest text-slate-500">TOTAL LABA (2024)</p><p class="mt-3 text-3xl font-bold text-blue-800">USD 3,13</p><p class="font-semibold">Miliar</p><p class="mt-2 text-sm text-slate-500">Jumlah perolehan laba tahun 2024.</p></div>
-          <div class="rounded-xl border border-slate-200 bg-white p-6"><p class="text-xs font-semibold tracking-widest text-slate-500">ESG PERTAMINA</p><p class="mt-3 text-3xl font-bold text-blue-800">23,1</p><p class="font-semibold">(Medium Risk)</p><p class="mt-2 text-sm text-slate-500">ESG Risk Rating.</p></div>
+          <div class="rounded-xl border border-slate-200 bg-white p-6"><p class="text-xs font-semibold tracking-widest text-slate-500">PENDAPATAN (2024)</p><p data-count="75.33" data-decimals="2" data-prefix="USD " class="mt-3 text-3xl font-bold text-blue-800">USD 75,33</p><p class="font-semibold">Miliar</p><p class="mt-2 text-sm text-slate-500">Jumlah pendapatan yang dicapai Pertamina pada tahun 2024.</p></div>
+          <div class="rounded-xl border border-slate-200 bg-white p-6"><p class="text-xs font-semibold tracking-widest text-slate-500">TOTAL LABA (2024)</p><p data-count="3.13" data-decimals="2" data-prefix="USD " class="mt-3 text-3xl font-bold text-blue-800">USD 3,13</p><p class="font-semibold">Miliar</p><p class="mt-2 text-sm text-slate-500">Jumlah perolehan laba tahun 2024.</p></div>
+          <div class="rounded-xl border border-slate-200 bg-white p-6"><p class="text-xs font-semibold tracking-widest text-slate-500">ESG PERTAMINA</p><p data-count="23.1" data-decimals="1" class="mt-3 text-3xl font-bold text-blue-800">23,1</p><p class="font-semibold">(Medium Risk)</p><p class="mt-2 text-sm text-slate-500">ESG Risk Rating.</p></div>
         </div>
       </div>
       <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -223,21 +223,88 @@
 </footer>
 
 <script>
-  // Menu hamburger
-  const nav = document.getElementById('nav'), burger = document.getElementById('burger');
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  /* 1. Menu hamburger */
+  const nav = $('#nav'), burger = $('#burger');
   burger.addEventListener('click', () => {
     const open = nav.classList.toggle('hidden') === false;
     burger.setAttribute('aria-expanded', open);
   });
-  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  $$('a', nav).forEach(a => a.addEventListener('click', () => {
     if (innerWidth < 768) { nav.classList.add('hidden'); burger.setAttribute('aria-expanded', 'false'); }
   }));
 
-  // Slider hero + garis merah
-  const slides = [...document.querySelectorAll('.slide')],
-        tabs = [...document.querySelectorAll('.tab')],
-        bars = [...document.querySelectorAll('.bar')],
-        dots = [...document.querySelectorAll('.dot')];
+  /* 2. Efek saat scroll: header, progress, tombol atas, parallax, menu aktif */
+  const hdr = $('#hdr'), progress = $('#progress'), toTop = $('#toTop');
+  const hills = $('section[aria-label] [aria-hidden="true"]');
+  const links = $$('#nav a[href^="#"]');
+  const targets = links.map(a => $(a.getAttribute('href')));
+  let ticking = false;
+
+  function onScroll() {
+    const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+    hdr.classList.toggle('bg-blue-800', y > 60);
+    hdr.classList.toggle('shadow-lg', y > 60);
+    progress.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+    toTop.classList.toggle('hidden', y < 600);
+    if (hills && !reduce && y < innerHeight) hills.style.transform = `translateY(${y * 0.2}px)`;
+
+    const line = innerHeight * 0.35;
+    links.forEach((a, k) => {
+      const r = targets[k] && targets[k].getBoundingClientRect();
+      const aktif = !!r && r.top <= line && r.bottom > line;
+      a.classList.toggle('text-lime-400', aktif);
+      aktif ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current');
+    });
+    ticking = false;
+  }
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+  onScroll();
+
+  /* 3. Elemen muncul pelan saat di-scroll */
+  if (!reduce) {
+    const items = $$('main section:not([aria-label]) h2, main section:not([aria-label]) .grid > *:not(.grid)');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.remove('opacity-0', 'translate-y-8');
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.15 });
+    items.forEach((el) => {
+      const idx = [...el.parentElement.children].indexOf(el);
+      el.classList.add('opacity-0', 'translate-y-8', 'transition', 'duration-700', 'ease-out');
+      el.style.transitionDelay = Math.min(idx, 5) * 90 + 'ms';
+      io.observe(el);
+    });
+  }
+
+  /* 4. Angka naik dari 0 */
+  const fmt = (n, d) => n.toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const counters = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, to = parseFloat(el.dataset.count), d = +(el.dataset.decimals || 0), pre = el.dataset.prefix || '';
+      counters.unobserve(el);
+      if (reduce) { el.textContent = pre + fmt(to, d); return; }
+      const t0 = performance.now(), dur = 1600;
+      (function step(t) {
+        const p = Math.min((t - t0) / dur, 1), eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = pre + fmt(to * eased, d);
+        if (p < 1) requestAnimationFrame(step);
+      })(t0);
+    });
+  }, { threshold: 0.6 });
+  $$('[data-count]').forEach(el => counters.observe(el));
+
+  /* 5. Slider hero */
+  const hero = $('section[aria-label="Sorotan"]');
+  const slides = $$('.slide'), tabs = $$('.tab'), bars = $$('.bar'), dots = $$('.dot');
   const DURASI = 6000;
   let i = 0, timer;
 
@@ -256,10 +323,49 @@
       }
     });
   }
-  function auto() { clearInterval(timer); timer = setInterval(() => show((i + 1) % slides.length), DURASI); }
+  const next = () => show((i + 1) % slides.length);
+  const prev = () => show((i - 1 + slides.length) % slides.length);
+  function auto() { clearInterval(timer); timer = setInterval(next, DURASI); }
   tabs.forEach((t, k) => t.addEventListener('click', () => { show(k); auto(); }));
+
+  // Panah kiri/kanan (dibuat lewat JavaScript)
+  function arrow(label, txt, pos, fn) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', label);
+    b.textContent = txt;
+    b.className = 'absolute ' + pos + ' top-1/2 z-10 hidden size-12 -translate-y-1/2 place-items-center rounded-full bg-black/30 text-3xl leading-none text-white hover:bg-black/50 focus-visible:ring-2 focus-visible:ring-white md:grid';
+    b.addEventListener('click', () => { fn(); auto(); });
+    hero.appendChild(b);
+  }
+  arrow('Slide sebelumnya', '‹', 'left-4', prev);
+  arrow('Slide berikutnya', '›', 'right-4', next);
+
+  // Berhenti saat kursor di atas hero
+  hero.addEventListener('mouseenter', () => {
+    clearInterval(timer);
+    const b = bars[i];
+    b.style.width = getComputedStyle(b).width;
+    b.style.transition = 'none';
+  });
+  hero.addEventListener('mouseleave', () => { show(i); auto(); });
+
+  // Keyboard ← → dan geser di layar sentuh
+  addEventListener('keydown', (e) => {
+    if (scrollY > innerHeight * 0.7 || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+    if (e.key === 'ArrowRight') { next(); auto(); }
+    if (e.key === 'ArrowLeft') { prev(); auto(); }
+  });
+  let x0 = null;
+  hero.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  hero.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); auto(); }
+    x0 = null;
+  });
+
   show(0);
   auto();
+})();
 </script>
-</body>
-</html>
