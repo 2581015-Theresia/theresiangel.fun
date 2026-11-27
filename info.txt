@@ -1,0 +1,51 @@
+Name: Theresia Angel Simbolon
+Student ID: 2581015
+
+Domain link: https://www.theresiangel.fun/
+GitHub repository: https://github.com/2581015-Theresia/theresiangel.fun
+
+Approved Final Project website:
+PT Pertamina (Persero) - https://www.pertamina.com/
+
+PENJELASAN CLASS TAILWIND YANG DIPAKAI
+
+1. fixed inset-x-0 top-0 z-50
+   Membuat elemen menempel di bagian atas layar, selebar layar penuh, dan berada di atas elemen lain.
+   Dipakai di: <header>, supaya menu tetap terlihat saat halaman di-scroll.
+
+2. bg-linear-to-b from-sky-400 via-sky-100 to-amber-100
+   Membuat latar gradasi dari atas ke bawah dengan tiga warna.
+   Dipakai di: section hero (bagian paling atas halaman).
+
+3. rounded-full border border-white/80
+   rounded-full membuat sudut bulat penuh (bentuk pil). border border-white/80 membuat garis tepi putih dengan transparansi 80%.
+   Dipakai di: tombol "Registrasi Lembaga Penyalur" di header.
+
+4. focus-visible:ring-2 focus-visible:ring-sky-700
+   Menampilkan cincin berwarna biru di sekeliling link atau tombol saat dipilih dengan keyboard (tombol Tab), sehingga fokus keyboard terlihat jelas.
+   Dipakai di: link dan tombol di seluruh halaman, misalnya tombol "Direksi dan Komisaris" dan kartu Hubungan Investor.
+
+5. transition hover:-translate-y-1 hover:shadow-lg
+   transition membuat perubahan tampilan berjalan mulus. hover:-translate-y-1 menggeser kartu sedikit ke atas saat kursor berada di atasnya. hover:shadow-lg menambah bayangan besar saat hover.
+   Dipakai di: kartu Subholding pada bagian "Grup Bisnis Kami".
+
+6. sr-only
+   Menyembunyikan elemen secara visual tetapi tetap bisa dibaca oleh screen reader, sehingga aksesibilitas meningkat.
+   Dipakai di: judul <h1> dan link "Lewati ke konten" di bagian atas halaman.
+
+7. bg-sky-700
+   Memberi warna latar biru (sky-700) dari palet bawaan Tailwind.
+   Dipakai di: header saat halaman di-scroll, kartu Fortune, dan tombol kembali ke atas.
+
+PREFIX RESPONSIF YANG DIPAKAI
+
+- md: (aktif mulai lebar layar 768px ke atas)
+  md:flex pada bar menu atas di header: bar ini tersembunyi di HP (hidden) dan tampil horizontal di layar md ke atas.
+  md:hidden pada tombol hamburger (☰): tombol hanya tampil di HP dan hilang di layar md ke atas.
+
+- lg: (aktif mulai lebar layar 1024px ke atas)
+  lg:grid-cols-5 pada footer: footer tersusun 1 kolom di HP, 2 kolom di layar sm (sm:grid-cols-2), dan 5 kolom di layar lg ke atas.
+  lg:grid-cols-3 pada kartu Hubungan Investor: 1 kolom di HP, 2 kolom di sm, 3 kolom di lg.
+
+CATATAN
+Halaman ini memakai Tailwind CSS melalui Play CDN, tanpa file CSS terpisah dan tanpa blok <style>. JavaScript dipakai hanya untuk slider hero, menu hamburger, dan efek saat scroll.
