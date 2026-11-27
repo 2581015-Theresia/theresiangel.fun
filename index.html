@@ -223,6 +223,7 @@
 </footer>
 
 <script>
+  // Menu hamburger
   const nav = document.getElementById('nav'), burger = document.getElementById('burger');
   burger.addEventListener('click', () => {
     const open = nav.classList.toggle('hidden') === false;
@@ -231,32 +232,34 @@
   nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     if (innerWidth < 768) { nav.classList.add('hidden'); burger.setAttribute('aria-expanded', 'false'); }
   }));
-  const slides = [...document.querySelectorAll('.slide')],
-      tabs = [...document.querySelectorAll('.tab')],
-      bars = [...document.querySelectorAll('.bar')],
-      dots = [...document.querySelectorAll('.dot')];
-const DURASI = 6000; // 6 detik per slide
-let i = 0, timer;
 
-function show(n) {
-  i = n;
-  slides.forEach((s, k) => { s.classList.toggle('hidden', k !== n); s.classList.toggle('flex', k === n); });
-  tabs.forEach((t, k) => k === n ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current'));
-  dots.forEach((d, k) => d.classList.toggle('hidden', k !== n));
-  bars.forEach((b, k) => {
-    b.style.transition = 'none';   // reset ke 0
-    b.style.width = '0%';
-    if (k === n) {
-      b.offsetWidth;               // memaksa browser menggambar ulang
-      b.style.transition = `width ${DURASI}ms linear`;
-      b.style.width = '100%';      // melebar selama 6 detik
-    }
-  });
-}
-function auto() { clearInterval(timer); timer = setInterval(() => show((i + 1) % slides.length), DURASI); }
-tabs.forEach((t, k) => t.addEventListener('click', () => { show(k); auto(); }));
-show(0);
-auto();
+  // Slider hero + garis merah
+  const slides = [...document.querySelectorAll('.slide')],
+        tabs = [...document.querySelectorAll('.tab')],
+        bars = [...document.querySelectorAll('.bar')],
+        dots = [...document.querySelectorAll('.dot')];
+  const DURASI = 6000;
+  let i = 0, timer;
+
+  function show(n) {
+    i = n;
+    slides.forEach((s, k) => { s.classList.toggle('hidden', k !== n); s.classList.toggle('flex', k === n); });
+    tabs.forEach((t, k) => k === n ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current'));
+    dots.forEach((d, k) => d.classList.toggle('hidden', k !== n));
+    bars.forEach((b, k) => {
+      b.style.transition = 'none';
+      b.style.width = '0%';
+      if (k === n) {
+        b.offsetWidth;
+        b.style.transition = 'width ' + DURASI + 'ms linear';
+        b.style.width = '100%';
+      }
+    });
+  }
+  function auto() { clearInterval(timer); timer = setInterval(() => show((i + 1) % slides.length), DURASI); }
+  tabs.forEach((t, k) => t.addEventListener('click', () => { show(k); auto(); }));
+  show(0);
+  auto();
 </script>
 </body>
 </html>
